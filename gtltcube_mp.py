@@ -129,7 +129,7 @@ def cli():
     parser.add_argument("outfile", help="Output file name.")
 
     parser.add_argument("--savetmp", default = False, help="Save the temporary files (default is False).")
-    parser.add_argument("--zmax", type=int, default = 180, help="zmax parameter for gtltcube")
+    parser.add_argument("--zmax", type=int, default = 180, help="zmax parameter for gtltcube (default is 180)")
     
     args = parser.parse_args()
 
