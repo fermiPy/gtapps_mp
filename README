@@ -1,0 +1,19 @@
+		Fermi LAT Multi-Processor Scripts (version 1.0)
+
+The Fermi Science Tools (http://fermi.gsfc.nasa.gov/ssc) are a suite
+of tools developed for the analysis of both Fermi LAT and GBM
+data. This suite was developed by the FSSC and the instrument teams,
+and was reviewed by the Fermi Users' Group.  The LAT Multi-Processor
+Scripts are a set of python scripts to facilitate the analysis of LAT
+data.  This package depends on the Fermi Science Tools.
+
+The current tools avaialble are
+
+    * gtdiffrsp_mp.py
+    * gtexpmap_mp.py
+    * gtltcube_mp.py
+
+
+To recieve information on program execution for a specific script execute:
+
+   > python <gtapp>_mp.py -h
