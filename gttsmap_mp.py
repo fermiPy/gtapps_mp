@@ -78,6 +78,8 @@ def gttsmap_mp(nxpix, nypix, jobs, evfile, sfile, statistic,
     pixel and also creats a new FITS HDU that can store the final
     values.'''
 
+    print "THIS PROGRAM DOES NOT PRODUCE VALID RESULTS"
+
     wcs_temp = pywcs.WCS(naxis=2)
     wcs_temp.wcs.crpix = [(nxpix+1)/2.,(nypix+1)/2.]
     wcs_temp.wcs.cdelt = np.array([-1*binsz,binsz])
@@ -105,7 +107,8 @@ def gttsmap_mp(nxpix, nypix, jobs, evfile, sfile, statistic,
 
 def cli():
 
-    helpString = "Submits the gtexpmap program as sperate threads via python and\
+    helpString = "  -> DO NOT USE THIS PROGRAM. RESULTS ARE NOT VALID. <- \
+                  Submits the gtexpmap program as sperate threads via python and\
                   joins up the resulting temporary exposure maps at the end\
                   resulting in a single exposure map for the input event file.\
                   This greatly reduces the running time. For more details on \
