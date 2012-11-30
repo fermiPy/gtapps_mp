@@ -109,7 +109,8 @@ def cli():
                   resulting in a single exposure map for the input event file.\
                   This greatly reduces the running time. For more details on \
                   gtexpmap see the gtexpmap help file.  Note that the checksum \
-                  and datasum are incorrect for the final file."
+                  and datasum are incorrect for the final file.  The number of \
+                  spawned jobs is equal to xbins x ybins."
 
     import argparse
 
