@@ -1,4 +1,4 @@
-		Fermi LAT Multi-Processor Scripts (version 1.1)
+	Fermi LAT Multi-Processor Scripts (version 1.1)
 
 The Fermi Science Tools (http://fermi.gsfc.nasa.gov/ssc) are a suite
 of tools developed for the analysis of both Fermi LAT and GBM
@@ -27,8 +27,8 @@ See below for details on each tool.
   single file. This greatly reduces the running time. For more details
   on gtdiffrsp see the gtdiffrsp help file.
 
-  usage: python gtdiffrsp_mp.py [-h] [--savetmp SAVETMP]
-                jobs evfile scfile srcmdl irf outfile
+  usage: gtdiffrsp_mp.py [-h] [--savetmp SAVETMP]
+         		 jobs evfile scfile srcmdl irf outfile
 
   positional arguments:	    
   jobs               The number of jobs you wish to spawn (usually the number
@@ -63,6 +63,10 @@ See below for details on each tool.
   running time. For more details on gtexpmap see the gtexpmap help
   file. Note that the checksum and datasum are incorrect for the final
   file. The number of spawned jobs is equal to xbins x ybins.
+
+  usage: gtexpmap_mp.py [-h] [--savetmp SAVETMP]
+  	          	nlong nlat xbins ybins sfile evfile expcube IRFS srcrad
+         		nenergies outfile
 
   positional arguments:
   nlong              Number of longitude points. See gtexpmap help for more
@@ -99,3 +103,104 @@ See below for details on each tool.
 
   > python gtexpmap_mp.py 120 120 3 2 SC.fits 3C279_filtered_gti.fits
     3C279_ltcube.fits P7SOURCE_V6 30 20 3C279_expmap.fits
+
+* gtltcube_mp.py *
+
+  Submits the gtltcube program as sperate threads via python and joins
+  up the resulting temporary exposure cubes at the end resulting in a
+  single exposure cube for the input event file. This greatly reduces
+  the running time. For more details on gtltcube see the gtltcube help
+  file.
+
+  usage: gtltcube_mp.py [-h] [--savetmp SAVETMP] [--zmax ZMAX]
+  	                jobs sfile evfile outfile
+
+  positional arguments:
+  jobs               The number of jobs you wish to spawn (usually the number
+                     of cores on your machine).
+  sfile              The spacecraft data file. See gtltcube help for more
+                     information.
+  evfile             Input event file. See gtltcube help for more information.
+  outfile            Output file name.
+
+  optional arguments:
+  -h, --help         show this help message and exit
+  --savetmp SAVETMP  Save the temporary files (default is False).
+  --zmax ZMAX        zmax parameter for gtltcube (default is 180)
+
+  example:
+  This example creates a livetime cube for the file
+  '3C279_filtered_gti.fits' using 8 threads and the 'SC.fits'
+  spacecraft file.  It saves the output to '3C279_ltcube.fits'.  It
+  also sets the zmax value to 100 (the recommended value).
+
+  > python gtltcube_mp.py 8 SC.fits 3C279_filtered_gti.fits
+    3C279_ltcube.fits --zmax 100
+
+* gttsmap_mp.py *
+
+  Generates a TS Map by running seperate pixels on seperate
+  threads. It creates a template counts map to determine the location of
+  the pixels and the calculates the TS of a test source at each pixel on
+  that map. It then merges the results at the end. The map is divided
+  into seperate regions (called 000,001,002...) depending on the number
+  of jobs the user requests. It creates subdirectories for each region
+  and operates on them within the subdirectory.  For more details on the
+  parameters see the gttsmap help file. NOTE: ONLY DOES AN UNBINNED
+  ANALYSIS.
+
+  usage: gttsmap_mp.py [-h] [--savetmp SAVETMP]
+  	               nxpix nypix jobs evfile scfile expmap expcube srcmdl IRFS
+                       optimizer ftol toltype binsz coordsys xref yref proj
+                       outfile
+
+		       	  
+  positional arguments:
+  nxpix              Number of pixels along x-axis. See gttsmap help for more
+                     information.
+  nypix              Number of pixels along y-axis. See gttsmap help for more
+                     information.
+  jobs               The number of concurrent jobs.
+  evfile             Input event file. See gttsmap help for more information.
+  scfile             The spacecraft data file. See gttsmap help for more
+                     information.
+  expmap             Input exposure map. See gttsmap help for more
+                     information.
+  expcube            Input livetime cube. See gttsmap help for more
+                     information.
+  srcmdl             XML source model definition. See gttsmap help for more
+                     information.
+  IRFS               IRFs to use. See gttsmap help for more information.
+  optimizer          The optimizer (e.g. NEWMINUIT). See gttsmap help for more
+                     information.
+  ftol               Fit tolerance. See gttsmap help for more information.
+  toltype            Tolerance type (0 for RELATIVE and 1 for ABSOLUTE). See
+                     gttsmap help for more information.
+  binsz              Image scale (deg/pix). See gttsmap help for more
+                     information.
+  coordsys           CEL or GAL. See gttsmap help for more information.
+  xref               x-coord of center (RA or l). See gttsmap help for more
+                     information.
+  yref               y-coord of center (DEC or b). See gttsmap help for more
+                     information.
+  proj               Coordinate projection. See gttsmap help for more
+                     information.
+  outfile            Output file name.
+
+  optional arguments:
+  -h, --help         show this help message and exit
+  --savetmp SAVETMP  Save the temporary files (default is False).
+
+  example:
+  This example creates a TS Map called '3C279_tsmap.fits' with 100
+  bins and using 6 threads.  Each bin is 0.5 degrees square.  It uses
+  the event file '3C279_filtered_gti.fits', the spacecraft file
+  'SC.fits', the exposure map '3C279_expmap.fits', the livetime cube
+  '3C279_ltcube.fits', the model file '3C279_model.xml' and the
+  P7SOURCE_V6.  The optimization is done by the MINUIT optimizer at an
+  absolute tolerance of 1e-5.  The map is centered on 193.98,-5.82 and
+  is created using the STG celestial coordinate system.
+
+  > python gttsmap_mp3.py 10 10 6 3C279_filtered_gti.fits SC.fits
+    3C279_expmap.fits 3C279_ltcube.fits 3C279_model.xml P7SOURCE_V6
+    MINUIT 1e-05 1 0.5 CEL 193.98 -5.82 STG 3C279_tsmap.fits
