@@ -1,4 +1,4 @@
-		Fermi LAT Multi-Processor Scripts (version 1.0)
+		Fermi LAT Multi-Processor Scripts (version 1.1)
 
 The Fermi Science Tools (http://fermi.gsfc.nasa.gov/ssc) are a suite
 of tools developed for the analysis of both Fermi LAT and GBM
@@ -12,8 +12,90 @@ The current tools avaialble are
     * gtdiffrsp_mp.py
     * gtexpmap_mp.py
     * gtltcube_mp.py
-
+    * gttsmap_mp.py (Unbinned Only)
 
 To recieve information on program execution for a specific script execute:
 
    > python <gtapp>_mp.py -h
+
+See below for details on each tool.
+
+* gtdiffrsp_mp.py *
+
+  Submits the gtdiffrsp program as seperate threads via python and
+  joins up the resulting temporary files at the end resulting in a
+  single file. This greatly reduces the running time. For more details
+  on gtdiffrsp see the gtdiffrsp help file.
+
+  usage: python gtdiffrsp_mp.py [-h] [--savetmp SAVETMP]
+                jobs evfile scfile srcmdl irf outfile
+
+  positional arguments:	    
+  jobs               The number of jobs you wish to spawn (usually the number
+                     of cores on your machine).
+  evfile             Input event file. See gtdiffrsp help for more
+                     information.
+  scfile             Spacecraft file. See gtdiffrsp help for more information.
+  srcmdl             The source model file to use. See gtdiffrsp help for more
+                     information.
+  irf                The IRFs to use. See gtdiffrsp help for more information.
+  outfile            Output file name.
+
+  optional arguments:
+  -h, --help         show this help message and exit
+  --savetmp SAVETMP  Save the temporary files (default is False).
+
+  example: 
+  This computes the diffuse response for the data in the file
+  '3C279_events.fits' using 4 seperate threads using the spacecraft
+  file 'SC.fits', the model file '3C279_model.xml' and the P7SOURCE_V6
+  instrument response functions.  It saves the output in
+  '3C279_events_diffrsp.fits'
+
+  > python gtdiffrsp_mp.py 4 3C279_events.fits SC.fits 3C279_model.xml
+    P7SOURCE_V6 3C279_events_diffrsp.fits
+
+* gtexpmap_mp.py *
+
+  Submits the gtexpmap program as sperate threads via python and joins
+  up the resulting temporary exposure maps at the end resulting in a
+  single exposure map for the input event file. This greatly reduces the
+  running time. For more details on gtexpmap see the gtexpmap help
+  file. Note that the checksum and datasum are incorrect for the final
+  file. The number of spawned jobs is equal to xbins x ybins.
+
+  positional arguments:
+  nlong              Number of longitude points. See gtexpmap help for more
+                     information.
+  nlat               Number of latitude points. See gtexpmap help for more
+                     information.
+  xbins              The number of bins along the x-axis. Must divide evenly
+                     into nlong.
+  ybins              The number of bins along the y-axis. Must divide evenly
+                     into nlat.
+  sfile              The spacecraft data file. See gtexpmap help for more
+                     information.
+  evfile             Input event file. See gtexpmap help for more information.
+  expcube            Input livetime cube. See gtexpmap help for more
+                     information.
+  IRFS               IRFs to use. See gtexpmap help for more information.
+  srcrad             Radius. See gtexpmap help for more information.
+  nenergies          Number of energy slices. See gtexpmap help for more
+                     information.
+  outfile            Output file name.
+
+  optional arguments:
+  -h, --help         show this help message and exit
+  --savetmp SAVETMP  Save the temporary files (default is False).
+
+  example: 
+  This computes a 30 degree radius exposure map for a the data in
+  '3C279_filtered_gti.fits' with 120 by 120 pixels and 20 energy bins
+  using the spacecraft file 'SC.fits', the exposure cube
+  '3C279_ltcube.fits' and the P7SOURCE_V6 instrument response files.
+  It submits 6 jobs by making xbins = 3 and ybins = 2 (3*2 = 6).  Both
+  3 and 2 divide equally into 120.  The resulting file is saved as
+  '3C279_expmap.fits'.
+
+  > python gtexpmap_mp.py 120 120 3 2 SC.fits 3C279_filtered_gti.fits
+    3C279_ltcube.fits P7SOURCE_V6 30 20 3C279_expmap.fits
