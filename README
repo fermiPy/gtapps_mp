@@ -140,14 +140,16 @@ See below for details on each tool.
 * gttsmap_mp.py *
 
   Generates a TS Map by running seperate pixels on seperate
-  threads. It creates a template counts map to determine the location of
-  the pixels and the calculates the TS of a test source at each pixel on
-  that map. It then merges the results at the end. The map is divided
-  into seperate regions (called 000,001,002...) depending on the number
-  of jobs the user requests. It creates subdirectories for each region
-  and operates on them within the subdirectory.  For more details on the
-  parameters see the gttsmap help file. NOTE: ONLY DOES AN UNBINNED
-  ANALYSIS.
+  threads. It creates a template counts map to determine the location
+  of the pixels and the calculates the TS of a test source at each
+  pixel on that map. It then merges the results at the end. The map is
+  divided into seperate regions (called 000,001,002...) depending on
+  the number of jobs the user requests. It creates subdirectories for
+  each region and operates on them within the subdirectory.  For more
+  details on the parameters see the gttsmap help file. NOTE: ONLY DOES
+  AN UNBINNED ANALYSIS. NOTE2: Any files referenced in the model XML
+  file must be referenced by abosolute and not relative directories
+  (ie. not ./ or ../)"
 
   usage: gttsmap_mp.py [-h] [--savetmp SAVETMP]
   	               nxpix nypix jobs evfile scfile expmap expcube srcmdl IRFS
@@ -168,8 +170,10 @@ See below for details on each tool.
                      information.
   expcube            Input livetime cube. See gttsmap help for more
                      information.
-  srcmdl             XML source model definition. See gttsmap help for more
-                     information.
+  srcmdl 	     XML source model definition. See gttsmap help for more
+                     information.  Any files in the xml (like the
+                     diffuse models) need to be referenced by absolute
+                     directories.
   IRFS               IRFs to use. See gttsmap help for more information.
   optimizer          The optimizer (e.g. NEWMINUIT). See gttsmap help for more
                      information.

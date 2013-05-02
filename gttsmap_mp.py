@@ -293,7 +293,9 @@ def cli():
                   of jobs the user requests.  It creates subdirectories for each region\
                   and operates on them within the subdirectory.  For more details on\
                   the parameters see the gttsmap help file.  NOTE:  ONLY DOES AN \
-                  UNBINNED ANALYSIS."
+                  UNBINNED ANALYSIS.  NOTE2:  Any files referenced in the model XML file\
+                  must be referenced by abosolute and not relative directories \
+                  (ie. not ./ or ../)"
 
     parser = argparse.ArgumentParser(description=helpString)
     parser.add_argument("nxpix", type=int, help="Number of pixels along x-axis.  See gttsmap help for more information.")
@@ -304,7 +306,7 @@ def cli():
     #parser.add_argument("statistic", help="UNBINNED or BINNED. See gttsmap help for more information.")
     parser.add_argument("expmap", help="Input exposure map.  See gttsmap help for more information.")    
     parser.add_argument("expcube", help="Input livetime cube.  See gttsmap help for more information.")
-    parser.add_argument("srcmdl", help="XML source model definition.  See gttsmap help for more information.")
+    parser.add_argument("srcmdl", help="XML source model definition.  Any files in the xml (like the diffuse models) need to be referenced by absolute directories. See gttsmap help for more information.")
     parser.add_argument("IRFS", help="IRFs to use.  See gttsmap help for more information.")
     parser.add_argument("optimizer", help="The optimizer (e.g. NEWMINUIT). See gttsmap help for more information.")
     parser.add_argument("ftol", type=float, help="Fit tolerance. See gttsmap help for more information.")
