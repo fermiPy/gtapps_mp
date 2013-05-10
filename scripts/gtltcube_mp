@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+import gtltcube_mp
+if __name__ == '__main__':
+    gtltcube_mp.cli()

@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+import gtdiffrsp_mp
+if __name__ == '__main__':
+    gtdiffrsp_mp.cli()

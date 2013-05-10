@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+import gtexpmap_mp
+if __name__ == '__main__':
+    gtexpmap_mp.cli()
