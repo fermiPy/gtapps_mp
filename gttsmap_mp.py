@@ -7,9 +7,9 @@ import pyfits
 import sys
 import pickle
 import argparse
+import numpy as num
 
 import pyLikelihood as pyLike
-from UnbinnedAnalysis import *
 from gt_apps import GtApp
 
 """ The overall structure and many of the underlying algorithms used
@@ -35,7 +35,10 @@ def getPointSource(like):
     '''This function creats a test source object for use in the likelihood
     analysis at a specific pixel.'''
 
-    test_src = pyLike.PointSource(0, 0, like.observation.observation)
+    try:
+        test_src = pyLike.PointSource(0, 0, like.observation.observation)
+    except AttributeError:
+        test_src = pyLike.PointSource(0, 0, like.binnedData.observation)
     pl = pyLike.SourceFactory_funcFactory().create('PowerLaw')
     pl.setParamValues((1, -2, 100))
     indexPar = pl.getParam('Index')
@@ -70,13 +73,22 @@ def runLikelihood(subdir, tpl_file):
 
     pixel_coords = PixelCoords(tpl_file)
 
-    obs = UnbinnedObs(resolve_fits_files(pars['evfile']),
-                      resolve_fits_files(pars['scfile']),
-                      expMap='../'+pars['expmap'],
-                      expCube='../'+pars['expcube'],
-                      irfs=pars['irfs'])
+    if pars['statistic'] == 'UNBINNED':
+        import UnbinnedAnalysis as UBAn
+        obs = UBAn.UnbinnedObs(resolve_fits_files(pars['evfile']),
+                               resolve_fits_files(pars['scfile']),
+                               expMap='../'+pars['expmap'],
+                               expCube='../'+pars['expcube'],
+                               irfs=pars['irfs'])
+        like = UBAn.UnbinnedAnalysis(obs, '../'+pars['srcmdl'], pars['optimizer'])
+    elif pars['statistic'] == 'BINNED':
+        import BinnedAnalysis as BAn 
+        obs = BAn.BinnedObs(srcMaps='../'+pars['srcmaps'],
+                            expCube='../'+pars['expcube'],
+                            binnedExpMap='../'+pars['bexpmap'],
+                            irfs=pars['irfs'])
+        like = BAn.BinnedAnalysis(obs, '../'+pars['srcmdl'], pars['optimizer'])
 
-    like = UnbinnedAnalysis(obs, '../'+pars['srcmdl'], pars['optimizer'])
     like.setFitTolType(pars['toltype'])
     like.optimize(0)
     loglike0 = like()
@@ -298,13 +310,12 @@ def cli():
                   (ie. not ./ or ../)"
 
     parser = argparse.ArgumentParser(description=helpString)
+
     parser.add_argument("nxpix", type=int, help="Number of pixels along x-axis.  See gttsmap help for more information.")
     parser.add_argument("nypix", type=int, help="Number of pixels along y-axis.  See gttsmap help for more information.")
     parser.add_argument("jobs", type=int, help="The number of concurrent jobs.")
     parser.add_argument("evfile", help="Input event file.  See gttsmap help for more information.")
-    parser.add_argument("scfile", help="The spacecraft data file. See gttsmap help for more information.")
-    #parser.add_argument("statistic", help="UNBINNED or BINNED. See gttsmap help for more information.")
-    parser.add_argument("expmap", help="Input exposure map.  See gttsmap help for more information.")    
+    parser.add_argument("scfile", help="The spacecraft data file. See gttsmap help for more information.")    
     parser.add_argument("expcube", help="Input livetime cube.  See gttsmap help for more information.")
     parser.add_argument("srcmdl", help="XML source model definition.  Any files in the xml (like the diffuse models) need to be referenced by absolute directories. See gttsmap help for more information.")
     parser.add_argument("IRFS", help="IRFs to use.  See gttsmap help for more information.")
@@ -318,14 +329,23 @@ def cli():
     parser.add_argument("proj", help="Coordinate projection. See gttsmap help for more information.")
     parser.add_argument("outfile", help="Output file name.")
 
+    subparsers = parser.add_subparsers(help="UNBINNED or BINNED. See gttsmap help for more information.", dest="statistic")
+
+    unbinned_parser = subparsers.add_parser('UNBINNED')
+    unbinned_parser.add_argument("expmap", help="Input exposure map.  See gttsmap help for more information.")    
+
+    binned_parser = subparsers.add_parser('BINNED')
+    binned_parser.add_argument("cmap", help="Counts map file.  See gttsmap help for more information.")
+    binned_parser.add_argument("bexpmap", help="Binned exposure map.  See gttsmap help for more information.")
+    binned_parser.add_argument("srcmaps", help="Source maps file.  See gtlike help for more information.")
+
     parser.add_argument("--savetmp", default = False, help="Save the temporary files (default is False).")
     
     args = parser.parse_args()
 
     pars = {}
 
-    pars['evfile'] = args.evfile
-    pars['scfile'] = args.scfile
+    pars['statistic'] = args.statistic
     pars['nxpix'] = args.nxpix
     pars['nypix'] = args.nypix
     pars['binsz'] = args.binsz
@@ -333,7 +353,6 @@ def cli():
     pars['xref'] = args.xref
     pars['yref'] = args.yref
     pars['proj'] = args.proj
-    pars['expmap'] = args.expmap
     pars['expcube'] = args.expcube
     pars['srcmdl'] = args.srcmdl
     pars['outfile'] = args.outfile
@@ -341,6 +360,15 @@ def cli():
     pars['optimizer'] = args.optimizer
     pars['ftol'] = args.ftol
     pars['toltype'] = args.toltype
+    pars['evfile'] = args.evfile
+    pars['scfile'] = args.scfile
+
+    if(args.statistic == 'UNBINNED'):
+        pars['expmap'] = args.expmap
+    elif(args.statistic == 'BINNED'):
+        pars['cmap'] = args.cmap
+        pars['bexpmap'] = args.bexpmap
+        pars['srcmaps'] = args.srcmaps
 
     gttsmap_mp(pars,num_queues=args.jobs,savetmp=args.savetmp)
 
