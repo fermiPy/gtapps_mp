@@ -6,6 +6,7 @@ import pyfits
 import tempfile
 import os
 import subprocess
+#import sys
 
 from gt_apps import filter,expCube
 
@@ -109,6 +110,10 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
     times = np.array([starts,stops,scfiles,evfiles,zmaxes])
     print "Spawning {} jobs...".format(bins)
     tempfilenames = pool.map(ltcube,times.transpose())
+    #tempfilenames = []
+    #for i, _ in enumerate(pool.imap_unordered(ltcube, times.transpose()), 1):
+    #    sys.stderr.write('\rdone {0:},({1:})'.format(i,_))
+    #    tempfilenames.append(_)
     print "Combining temporary files..."
     ltsum(tempfilenames, OutFile, SaveTemp)
 
