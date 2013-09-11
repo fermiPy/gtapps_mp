@@ -85,13 +85,13 @@ def gtexpmap_mp(nlong, nlat, xbins, ybins, SCFile, EVFile, ExpCube,
         print "The number of x and y bins must fit evenly into the number of long or lat points."
         return
 
-    stepx = nlat/xbins
-    stepy = nlong/ybins
+    stepx = nlong/xbins
+    stepy = nlat/ybins
 
-    x_start = np.linspace(0,nlat-stepx,xbins)
-    x_stop = np.linspace(stepx,nlat,xbins)
-    y_start = np.linspace(0,nlong-stepy,ybins)
-    y_stop = np.linspace(stepy,nlong,ybins)
+    x_start = np.linspace(0,nlong-stepx,xbins)
+    x_stop = np.linspace(stepx,nlong,xbins)
+    y_start = np.linspace(0,nlat-stepy,ybins)
+    y_stop = np.linspace(stepy,nlat,ybins)
 
     pairs = [(x_pair,y_pair) for x_pair in np.column_stack((x_start,x_stop)) for y_pair in np.column_stack((y_start,y_stop))]
     SQ = [(row, SCFile,EVFile,ExpCube,nlong,nlat,IRF,srcrad,nenergy) for row in pairs]    
