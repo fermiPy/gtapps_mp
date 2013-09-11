@@ -58,7 +58,7 @@ def run_gtsrcmaps(square):
 
     return idx,srcmapfilename
 
-def srcmapssum(results, outfile, savetemp):
+def srcmapssum(results, ref_hdu, outfile, savetemp):
 
     '''This function takes a list of source maps and joins them together.
     If there is only one file to be joined, it just copies it to the
@@ -135,7 +135,7 @@ def gtsrcmaps_mp(nxpix, nypix, binsz, scfile, evfile, expcube,
     print "Spawning {} jobs...".format(jobs)
     results = pool.map(run_gtsrcmaps,SQ)
     print "Combining temporary files..."
-    srcmapssum(results, outfile, savetmp)
+    srcmapssum(results, ref_hdu, outfile, savetmp)
 
 def cli():
 

@@ -92,14 +92,26 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
     Note that this assumes you are using the full time period in your
     spacecraft file.'''
 
+    print "Opening event file to determine start and stop times..."
+    evfile = pyfits.open(EVFile)
+    tstart = evfile[0].header['TSTART']
+    tstop = evfile[0].header['TSTOP']
+
     print "Opening SC file to determine break points..."
     hdulist = pyfits.open(SCFile)
     scdata = hdulist[1].data
     hdulist.close()
     scstart = scdata.field('START')
     scstop = scdata.field('STOP')
-    scstartssplit = np.array_split(scstart,int(bins))
-    scstopssplit = np.array_split(scstop,bins) 
+
+    time_filter = (tstart <= scstart) & (scstop <= tstop)
+    scstartssplit = np.array_split(scstart[time_filter],int(bins))
+    scstopssplit = np.array_split(scstop[time_filter],bins) 
+
+    #Explicitly set the first and last point to the values in the evfile header
+    scstartssplit[0][0] = tstart
+    scstopssplit[-1][-1] = tstop
+
     starts = [st[0] for st in scstartssplit]
     stops = [st[-1] for st in scstopssplit]
     scfiles = [SCFile for st in scstartssplit]
