@@ -39,7 +39,7 @@ def ltcube(times):
     filter['zmax'] = 180
     filter['convtype'] = -1
     filter['chatter'] = 0
-    filter.run(print_command=False)
+    filter.run(print_command=True)
 
     osfilehandle,outfilename = tempfile.mkstemp(suffix=".fits")
     expCube['evfile'] = evfile.name
@@ -50,7 +50,7 @@ def ltcube(times):
     expCube['phibins'] = 0
     expCube['zmax'] = times[4]
     expCube['chatter'] = 0
-    expCube.run(print_command=False)
+    expCube.run(print_command=True)
     print "Completed calculation on interval {} to {}".format(times[0],times[1])
     return outfilename
 
@@ -93,12 +93,12 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
     spacecraft file.'''
 
     print "Opening event file to determine start and stop times..."
-    evfile = pyfits.open(EVFile)
+    evfile = pyfits.open(EVFile, mode='readonly')
     tstart = evfile[0].header['TSTART']
     tstop = evfile[0].header['TSTOP']
 
     print "Opening SC file to determine break points..."
-    hdulist = pyfits.open(SCFile)
+    hdulist = pyfits.open(SCFile, mode='readonly')
     scdata = hdulist[1].data
     hdulist.close()
     scstart = scdata.field('START')
