@@ -307,7 +307,10 @@ def cli():
                   the parameters see the gttsmap help file.  NOTE:  ONLY DOES AN \
                   UNBINNED ANALYSIS.  NOTE2:  Any files referenced in the model XML file\
                   must be referenced by abosolute and not relative directories \
-                  (ie. not ./ or ../)"
+                  (ie. not ./ or ../) \
+                  \
+                  BEWARE:  THIS PROGRAM IS KNOWN TO PRODUCE SPURIOUS RESULTS IN SOME CASES.\
+                                             USE WITH CAUTION."
 
     parser = argparse.ArgumentParser(description=helpString)
 
