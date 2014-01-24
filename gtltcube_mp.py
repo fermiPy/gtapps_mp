@@ -56,7 +56,6 @@ def ltcube(times):
     expCube['phibins'] = 0
     expCube['zmax'] = times[4]
     expCube['chatter'] = 0
-    print expCube.command()
     expCube.run(print_command=True)
     print "Completed calculation on interval {} to {}".format(times[0],times[1])
     return outfilename
