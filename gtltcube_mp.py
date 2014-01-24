@@ -23,33 +23,40 @@ def ltcube(times):
     deleted later.'''
 
     print "Starting calculation on interval {} to {}".format(times[0],times[1])
-    evfile = tempfile.NamedTemporaryFile(suffix=".fits")
-    filter['rad'] = "INDEF"
-    filter['evclass'] = 0
-    filter['evclsmin'] = 0
-    filter['evclsmax'] = 10
-    filter['infile'] = times[3]
-    filter['outfile'] = evfile.name
-    filter['ra'] = "INDEF"
-    filter['dec'] = "INDEF"
-    filter['tmin'] = times[0]
-    filter['tmax'] = times[1]
-    filter['emin'] = 0
-    filter['emax'] = 400000
-    filter['zmax'] = 180
-    filter['convtype'] = -1
-    filter['chatter'] = 0
-    filter.run(print_command=True)
+    if times[3] != '':
+        evfile = tempfile.NamedTemporaryFile(suffix=".fits")
+        filter['rad'] = "INDEF"
+        filter['evclass'] = 0
+        filter['evclsmin'] = 0
+        filter['evclsmax'] = 10
+        filter['infile'] = times[3]
+        filter['outfile'] = evfile.name
+        filter['ra'] = "INDEF"
+        filter['dec'] = "INDEF"
+        filter['tmin'] = times[0]
+        filter['tmax'] = times[1]
+        filter['emin'] = 0
+        filter['emax'] = 400000
+        filter['zmax'] = 180
+        filter['convtype'] = -1
+        filter['chatter'] = 0
+        filter.run(print_command=True)
 
     osfilehandle,outfilename = tempfile.mkstemp(suffix=".fits")
-    expCube['evfile'] = evfile.name
+    if times[3] != '':
+        expCube['evfile'] = evfile.name
+    else:
+        expCube['evfile'] = ""
     expCube['scfile'] =  times[2]
     expCube['outfile'] = outfilename
+    expCube['tmin'] = times[0]
+    expCube['tmax'] = times[1]
     expCube['dcostheta'] = 0.025
     expCube['binsz'] = 1
     expCube['phibins'] = 0
     expCube['zmax'] = times[4]
     expCube['chatter'] = 0
+    print expCube.command()
     expCube.run(print_command=True)
     print "Completed calculation on interval {} to {}".format(times[0],times[1])
     return outfilename
@@ -83,7 +90,7 @@ def ltsum(filenames, Outfile, SaveTemp):
             os.remove(filename)
 
 
-def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
+def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax, tmin, tmax):
 
     '''This functions looks at a spacecraft file and splits the time into
     chunks that match the bin edges in the spacecraft file.  It then
@@ -94,11 +101,18 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
 
     verbose = False
 
-    print "Opening event file to determine start and stop times..."
-    evfile = pyfits.open(EVFile, mode='readonly')
-    tstart = evfile[0].header['TSTART']
-    tstop = evfile[0].header['TSTOP']
-    gti_data = evfile[2].data
+    if EVFile != "":
+        evfile = pyfits.open(EVFile, mode='readonly')
+        gti_data = evfile[2].data
+
+    if tmin == 0: 
+        print "Determining start and stop times from the event file..."
+        tstart = evfile[0].header['TSTART']
+        tstop = evfile[0].header['TSTOP']
+    else:
+        print "Using user defined tmin and tmax..."
+        tstart = tmin
+        tstop = tmax
 
     print "Opening SC file to determine break points..."
     hdulist = pyfits.open(SCFile, mode='readonly')
@@ -110,7 +124,8 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
     time_filter = (tstart <= scstart) & (scstop <= tstop)
 
     redo = True
-    print "Checking for good times in the event file..."
+    if EVFile !="":
+        print "Checking for good times in the event file..."
     while redo:
         redo = False
         scstartssplit = np.array_split(scstart[time_filter],int(bins))
@@ -123,24 +138,25 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
         starts = [st[0] for st in scstartssplit]
         stops = [st[-1] for st in scstopssplit]
 
-        for interval in zip(starts,stops):
-            if verbose: print "Looking at interval",interval[0],"to",interval[1]
-            good_times = False
-            #grrrr.  some bug in pyfits doesn't let me do this the python way...
-            for gti_i in range(len(gti_data)):
-                if(not good_times):
-                    if verbose: print "   Checking gti",gti_data[gti_i]['START'],"to",gti_data[gti_i]['STOP']
-                    gti_starts = interval[0] <= gti_data[gti_i]['START'] <= interval[1]
-                    gti_stops = interval[0] <= gti_data[gti_i]['STOP'] <= interval[1]
-                    if verbose: print "   Does this gti start inside this interval? ", gti_starts
-                    if verbose: print "   Does this gti stop inside this interval? ", gti_stops
-                    good_times = gti_starts or gti_stops
-                    if verbose: print
+        if EVFile != "":
+            for interval in zip(starts,stops):
+                if verbose: print "Looking at interval",interval[0],"to",interval[1]
+                good_times = False
+                #grrrr.  some bug in pyfits doesn't let me do this the python way...
+                for gti_i in range(len(gti_data)):
+                    if(not good_times):
+                        if verbose: print "   Checking gti",gti_data[gti_i]['START'],"to",gti_data[gti_i]['STOP']
+                        gti_starts = interval[0] <= gti_data[gti_i]['START'] <= interval[1]
+                        gti_stops = interval[0] <= gti_data[gti_i]['STOP'] <= interval[1]
+                        if verbose: print "   Does this gti start inside this interval? ", gti_starts
+                        if verbose: print "   Does this gti stop inside this interval? ", gti_stops
+                        good_times = gti_starts or gti_stops
+                        if verbose: print
         
-            if verbose: print "  Are there good times inside this interval? ", good_times
-            if not good_times:
-                redo = True
-            if verbose: print
+                if verbose: print "  Are there good times inside this interval? ", good_times
+                if not good_times:
+                    redo = True
+                if verbose: print
 
         if redo:
             if bins <= 1:
@@ -152,6 +168,7 @@ def gtltcube_mp(bins, SCFile, EVFile, OutFile, SaveTemp, zmax):
         
     scfiles = [SCFile for st in scstartssplit]
     evfiles = [EVFile for st in scstartssplit]
+    print "EVFiles:",evfiles
     zmaxes =  [zmax for st in scstartssplit]
 
     pool = Pool(processes=bins)      
@@ -179,10 +196,12 @@ def cli():
 
     parser.add_argument("--savetmp", default = False, help="Save the temporary files (default is False).")
     parser.add_argument("--zmax", type=int, default = 180, help="zmax parameter for gtltcube (default is 180)")
+    parser.add_argument("--tmin", type=float, default=0, help="start time (if not given, will derive from evfile)")
+    parser.add_argument("--tmax", type=float, default=0, help="stop time (if not given, will derive from evfile)")
     
     args = parser.parse_args()
 
-    gtltcube_mp(args.jobs, args.sfile, args.evfile, args.outfile, args.savetmp, args.zmax)
+    gtltcube_mp(args.jobs, args.sfile, args.evfile, args.outfile, args.savetmp, args.zmax, args.tmin, args.tmax)
 
 
 if __name__ == '__main__': cli()
