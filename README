@@ -152,9 +152,9 @@ See below for details on each tool.
   (ie. not ./ or ../)"
 
   usage: gttsmap_mp.py [-h] [--savetmp SAVETMP]
-  	               nxpix nypix jobs evfile scfile expmap expcube srcmdl IRFS
+  	               nxpix nypix jobs evfile scfile expcube srcmdl IRFS
                        optimizer ftol toltype binsz coordsys xref yref proj
-                       outfile
+                       outfile UNBINNED expmap
 
 		       	  
   positional arguments:
@@ -165,8 +165,6 @@ See below for details on each tool.
   jobs               The number of concurrent jobs.
   evfile             Input event file. See gttsmap help for more information.
   scfile             The spacecraft data file. See gttsmap help for more
-                     information.
-  expmap             Input exposure map. See gttsmap help for more
                      information.
   expcube            Input livetime cube. See gttsmap help for more
                      information.
@@ -190,6 +188,9 @@ See below for details on each tool.
   proj               Coordinate projection. See gttsmap help for more
                      information.
   outfile            Output file name.
+  analysis           UNBINNED. Only unbinned analysis supported.
+  expmap             Input exposure map. See gttsmap help for more
+                     information.
 
   optional arguments:
   -h, --help         show this help message and exit
@@ -205,6 +206,7 @@ See below for details on each tool.
   absolute tolerance of 1e-5.  The map is centered on 193.98,-5.82 and
   is created using the STG celestial coordinate system.
 
-  > python gttsmap_mp3.py 10 10 6 3C279_filtered_gti.fits SC.fits
-    3C279_expmap.fits 3C279_ltcube.fits 3C279_model.xml P7SOURCE_V6
-    MINUIT 1e-05 1 0.5 CEL 193.98 -5.82 STG 3C279_tsmap.fits
+  > python gttsmap_mp.py 10 10 6 3C279_filtered_gti.fits SC.fits
+    3C279_ltcube.fits 3C279_model.xml P7SOURCE_V6
+    MINUIT 1e-05 1 0.5 CEL 193.98 -5.82 STG 3C279_tsmap.fits UNBINNED
+    3C279_expmap.fits
