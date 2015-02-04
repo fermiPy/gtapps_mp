@@ -7,14 +7,14 @@ and was reviewed by the Fermi Users' Group.  The LAT Multi-Processor
 Scripts are a set of python scripts to facilitate the analysis of LAT
 data.  This package depends on the Fermi Science Tools.
 
-The current tools avaialble are
+The current tools available are
 
     * gtdiffrsp_mp.py
     * gtexpmap_mp.py
     * gtltcube_mp.py
     * gttsmap_mp.py (Unbinned Only)
 
-To recieve information on program execution for a specific script execute:
+To receive information on program execution for a specific script execute:
 
    > python <gtapp>_mp.py -h
 
@@ -22,7 +22,7 @@ See below for details on each tool.
 
 * gtdiffrsp_mp.py *
 
-  Submits the gtdiffrsp program as seperate threads via python and
+  Submits the gtdiffrsp program as separate threads via python and
   joins up the resulting temporary files at the end resulting in a
   single file. This greatly reduces the running time. For more details
   on gtdiffrsp see the gtdiffrsp help file.
@@ -47,7 +47,7 @@ See below for details on each tool.
 
   example: 
   This computes the diffuse response for the data in the file
-  '3C279_events.fits' using 4 seperate threads using the spacecraft
+  '3C279_events.fits' using 4 separate threads using the spacecraft
   file 'SC.fits', the model file '3C279_model.xml' and the P7SOURCE_V6
   instrument response functions.  It saves the output in
   '3C279_events_diffrsp.fits'
@@ -57,7 +57,7 @@ See below for details on each tool.
 
 * gtexpmap_mp.py *
 
-  Submits the gtexpmap program as sperate threads via python and joins
+  Submits the gtexpmap program as operate threads via python and joins
   up the resulting temporary exposure maps at the end resulting in a
   single exposure map for the input event file. This greatly reduces the
   running time. For more details on gtexpmap see the gtexpmap help
@@ -106,7 +106,7 @@ See below for details on each tool.
 
 * gtltcube_mp.py *
 
-  Submits the gtltcube program as sperate threads via python and joins
+  Submits the gtltcube program as operate threads via python and joins
   up the resulting temporary exposure cubes at the end resulting in a
   single exposure cube for the input event file. This greatly reduces
   the running time. For more details on gtltcube see the gtltcube help
@@ -139,16 +139,16 @@ See below for details on each tool.
 
 * gttsmap_mp.py *
 
-  Generates a TS Map by running seperate pixels on seperate
+  Generates a TS Map by running separate pixels on separate
   threads. It creates a template counts map to determine the location
   of the pixels and the calculates the TS of a test source at each
   pixel on that map. It then merges the results at the end. The map is
-  divided into seperate regions (called 000,001,002...) depending on
+  divided into separate regions (called 000,001,002...) depending on
   the number of jobs the user requests. It creates subdirectories for
   each region and operates on them within the subdirectory.  For more
   details on the parameters see the gttsmap help file. NOTE: ONLY DOES
   AN UNBINNED ANALYSIS. NOTE2: Any files referenced in the model XML
-  file must be referenced by abosolute and not relative directories
+  file must be referenced by absolute and not relative directories
   (ie. not ./ or ../)"
 
   usage: gttsmap_mp.py [-h] [--savetmp SAVETMP]
