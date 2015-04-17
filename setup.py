@@ -14,7 +14,7 @@ else:
     sys.exit()
 
 setup(name='gtapps_mp',
-      version='1.2',
+      version='1.3',
       description='Fermi LAT Multicore Scripts',
       author='Jeremy S. Perkins (FSSC)',
       author_email='fermihelp@milkyway.gsfc.nasa.gov',
