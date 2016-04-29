@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
-import gtltcube_mp
+#import gtltcube_mp
+from gtapps_mp import gtltcube_mp
+
 if __name__ == '__main__':
     gtltcube_mp.cli()

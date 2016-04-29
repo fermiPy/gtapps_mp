@@ -2,7 +2,7 @@
 
 from multiprocessing import Pool
 import numpy as np
-import pyfits
+import astropy.io.fits as pyfits
 import tempfile
 import os
 import subprocess
