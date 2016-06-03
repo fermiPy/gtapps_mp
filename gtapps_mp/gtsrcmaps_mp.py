@@ -5,7 +5,7 @@ import numpy as np
 import tempfile
 import os
 import subprocess
-import pyfits
+from gtapps_mp.utils import pyfits
 
 from gt_apps import evtbin,srcMaps
 

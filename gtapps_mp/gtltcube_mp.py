@@ -2,7 +2,7 @@
 
 from multiprocessing import Pool
 import numpy as np
-import pyfits
+from gtapps_mp.utils import pyfits
 import tempfile
 import os
 import subprocess
@@ -27,8 +27,6 @@ def ltcube(times):
         evfile = tempfile.NamedTemporaryFile(suffix=".fits")
         filter['rad'] = "INDEF"
         filter['evclass'] = 0
-        filter['evclsmin'] = 0
-        filter['evclsmax'] = 10
         filter['infile'] = times[3]
         filter['outfile'] = evfile.name
         filter['ra'] = "INDEF"

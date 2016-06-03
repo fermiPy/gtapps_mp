@@ -2,7 +2,7 @@
 
 from multiprocessing import Pool
 import numpy as np
-import pyfits
+from gtapps_mp.utils import pyfits
 import tempfile
 import os
 import subprocess
