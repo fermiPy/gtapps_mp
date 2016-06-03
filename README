@@ -14,6 +14,10 @@ The current tools available are
     * gtltcube_mp.py
     * gttsmap_mp.py (Unbinned Only)
 
+Installation: navigate to the gtapps_mp directory and execute
+
+   > python setup.py install
+
 To receive information on program execution for a specific script execute:
 
    > python <gtapp>_mp.py -h
