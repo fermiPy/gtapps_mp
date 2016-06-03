@@ -25,7 +25,7 @@ def diffrsp(times):
 
     osfilehandle,outfilename = tempfile.mkstemp(suffix=".fits")
     filter['rad'] = "INDEF"
-    filter['evclass'] = 0
+    filter['evclass'] = "INDEF"
     filter['evclsmin'] = 0
     filter['evclsmax'] = 10
     filter['infile'] = times[3]
