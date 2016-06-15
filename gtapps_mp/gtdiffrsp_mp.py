@@ -66,7 +66,7 @@ def eventsum(filenames, Outfile, SaveTemp):
             fileListfile.file.write(filename + "\n")
         fileListfile.flush()
         filter['rad'] = "INDEF"
-        filter['evclass'] = 0
+        filter['evclass'] = "INDEF"
         filter['evclsmin'] = 0
         filter['evclsmax'] = 10
         filter['infile'] = "@"+fileListfile.name
