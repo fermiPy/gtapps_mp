@@ -5,7 +5,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(name='gtapps_mp',
-      version='1.4',
+      version='1.5',
       description='Fermi LAT Multicore Scripts',
       author='Jeremy S. Perkins (FSSC)',
       author_email='fermihelp@milkyway.gsfc.nasa.gov',
