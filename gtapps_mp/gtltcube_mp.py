@@ -25,16 +25,20 @@ def ltcube(times):
     print "Starting calculation on interval {} to {}".format(times[0],times[1])
     if times[3] != '':
         evfile = tempfile.NamedTemporaryFile(suffix=".fits")
+        filter['ra']="INDEF" 
+        filter['dec']="INDEF"
         filter['rad'] = "INDEF"
         filter['evclass'] = 0
+        filter['evtype'] = "INDEF"
         filter['infile'] = times[3]
         filter['outfile'] = evfile.name
         filter['ra'] = "INDEF"
         filter['dec'] = "INDEF"
         filter['tmin'] = times[0]
         filter['tmax'] = times[1]
-        filter['emin'] = 0
-        filter['emax'] = 400000
+        filter['emin'] = 0.0 
+        filter['emax'] = 1000000.0
+        filter['zmin'] = 0
         filter['zmax'] = 180
         filter['convtype'] = -1
         filter['chatter'] = 0
